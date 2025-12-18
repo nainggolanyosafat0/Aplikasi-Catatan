@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Buka Catatan Saya - Notes App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #f5f7ff;
+      --white: #ffffff;
+      --sidebar-bg: #ffffff;
+      --text-main: #111827;
+      --text-muted: #9ca3af;
+      --border-soft: #e5e7eb;
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.08);
+      --primary-dark: #020617;
+      --chip-bg: #eef2ff;
+      --chip-active-bg: #ffffff;
+      --chip-active-shadow: 0 8px 25px rgba(129, 140, 248, 0.45);
+      --card-purple: #f3e9ff;
+      --card-orange: #ffe4d4;
+      --card-yellow: #f6f4cf;
+      --card-pink: #ffe9f1;
+      --folder-start: #ffcc80;
+      --folder-end: #ffb74d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e0f2fe 0, #f5f7ff 38%, #f1f5f9 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .app {
+      display: flex;
+      width: 100%;
+      max-width: 1440px;
+      margin: 24px;
+      gap: 24px;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      width: 270px;
+      background: var(--sidebar-bg);
+      border-radius: 32px;
+      padding: 24px 22px 20px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #bbf7d0, #22c55e 40%, #0f172a 90%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(22, 163, 74, 0.4);
+    }
+
+    .brand-logo span {
+      color: #e5f9ff;
+      font-size: 22px;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-text .app-name {
+      font-weight: 700;
+      font-size: 19px;
+      letter-spacing: 0.01em;
+    }
+
+    .brand-text .user-name {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .btn-primary {
+      background: var(--primary-dark);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.6);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.7);
+    }
+
+    .btn-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: #020617;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .kbd {
+      border-radius: 12px;
+      padding: 4px 8px;
+      font-size: 11px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.85);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+      color: #e5e7eb;
+    }
+
+    .sidebar-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.17em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .menu-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 6px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.12s ease;
+      font-size: 14px;
+    }
+
+    .menu-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .menu-item:hover {
+      background: #f3f4ff;
+    }
+
+    .menu-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .menu-shortcut {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      color: var(--text-muted);
+      background: #f9fafb;
+    }
+
+    .folders-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      margin-bottom: 2px;
+    }
+
+    .folders-add {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      border: 1px dashed var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--text-muted);
+      background: #f9fafb;
+    }
+
+    .folder-list {
+      list-style: none;
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .folder-item {
+      padding: 7px 8px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #6b7280;
+      cursor: pointer;
+      transition: background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .folder-item.active {
+      background: #e5ebff;
+      color: #111827;
+      font-weight: 500;
+      box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.4);
+    }
+
+    .folder-item:hover:not(.active) {
+      background: #f3f4ff;
+      color: #111827;
+    }
+
+    .sidebar-bottom {
+      border-top: 1px solid var(--border-soft);
+      padding-top: 14px;
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .sidebar-bottom-item {
+      cursor: pointer;
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* MAIN */
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .main-section {
+      background: var(--white);
+      border-radius: 32px;
+      padding: 20px 22px 22px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .chip-group {
+      display: inline-flex;
+      background: var(--chip-bg);
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: 13px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #6b7280;
+      transition: background 0.1s ease, box-shadow 0.1s ease, color 0.1s ease;
+    }
+
+    .chip.active {
+      background: var(--chip-active-bg);
+      box-shadow: var(--chip-active-shadow);
+      color: #111827;
+      font-weight: 500;
+    }
+
+    /* NOTE CARDS */
+
+    .notes-row {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(260px, 1fr);
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .notes-row::-webkit-scrollbar,
+    .folders-row::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .notes-row::-webkit-scrollbar-thumb,
+    .folders-row::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.6);
+      border-radius: 999px;
+    }
+
+    .note-card {
+      border-radius: 26px;
+      padding: 16px 18px 14px;
+      position: relative;
+      min-height: 170px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: #f9fafb;
+    }
+
+    .note-card.color-1 { background: var(--card-purple); }
+    .note-card.color-2 { background: var(--card-orange); }
+    .note-card.color-3 { background: var(--card-yellow); }
+    .note-card.color-4 { background: var(--card-pink); }
+
+    .note-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .note-title {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .note-time {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .note-list {
+      list-style: none;
+      margin-top: 6px;
+      flex: 1;
+    }
+
+    .note-list li {
+      font-size: 13px;
+      padding: 4px 0;
+      border-bottom: 1px dashed rgba(148, 163, 184, 0.45);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .note-list li:last-child {
+      border-bottom: none;
+    }
+
+    .note-edit {
+      position: absolute;
+      right: 14px;
+      bottom: 12px;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: #d9f99d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(190, 242, 100, 0.8);
+      border: 1px solid rgba(163, 230, 53, 0.7);
+    }
+
+    /* RECENT FOLDERS */
+
+    .folders-row {
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .folder-card {
+      min-width: 96px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .folder-icon {
+      width: 70px;
+      height: 56px;
+      border-radius: 22px;
+      background: linear-gradient(145deg, var(--folder-start), var(--folder-end));
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 18px 40px rgba(245, 158, 11, 0.65);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .folder-icon::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 12px;
+      right: 12px;
+      height: 14px;
+      border-radius: 18px 18px 4px 4px;
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .folder-name {
+      font-size: 13px;
+      color: var(--text-main);
+      text-align: center;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .tab {
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 999px;
+      transition: background 0.1s ease, color 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .tab.active {
+      background: #eef2ff;
+      color: #111827;
+      font-weight: 500;
+      box-shadow: 0 8px 16px rgba(129, 140, 248, 0.35);
+    }
+
+    /* MODAL (untuk create/edit note & folder) */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 20px 20px 18px;
+      width: 360px;
+      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.45);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      cursor: pointer;
+      color: #6b7280;
+    }
+
+    .modal-body label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #4b5563;
+    }
+
+    .modal-body input,
+    .modal-body textarea,
+    .modal-body select {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 10px;
+      font-family: inherit;
+      font-size: 13px;
+      margin-bottom: 10px;
+      outline: none;
+    }
+
+    .modal-body textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn-primary-solid {
+      background: #111827;
+      color: #ffffff;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #d1d5db;
+      color: #4b5563;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    @media (max-width: 960px) {
+      .app {
+        flex-direction: column;
+        margin: 14px;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .sidebar-top {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .folder-list,
+      .sidebar-section-title,
+      .folders-header,
+      .sidebar-bottom {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <div class="brand-logo">
+            <span>☾</span>
+          </div>
+          <div class="brand-text">
+            <span class="app-name">Buka Catatan Saya</span>
+            <span class="user-name">Aplikasi Website</span>
+          </div>
+        </div>
+
+        <div>
+          <button class="btn-primary" id="createNoteBtn">
+            <div class="btn-left">
+              <div class="btn-icon">+</div>
+              <span>Create Note</span>
+            </div>
+            <span class="kbd">⌘ N</span>
+          </button>
+        </div>
+
+        <div>
+          <div class="sidebar-section-title">Main</div>
+          <ul class="menu-list">
+            <li class="menu-item" id="menuSearch">
+              <div class="menu-item-left">
+                <div class="menu-icon">⌕</div>
+                <span>Search</span>
+              </div>
+              <span class="menu-shortcut">⌘ S</span>
+            </li>
+            <li class="menu-item" id="menuArchives">
+              <div class="menu-item-left">
+                <div class="menu-icon">⧉</div>
+                <span>Archives</span>
+              </div>
+              <span class="menu-shortcut">⌘ R</span>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="folders-header">
+            <span class="sidebar-section-title">Folders</span>
+            <div class="folders-add" id="addFolderBtn">+</div>
+          </div>
+          <ul class="folder-list" id="sidebarFolderList">
+            <!-- diisi JS -->
+          </ul>
+        </div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-bottom-item">❔ Help</div>
+        <div class="sidebar-bottom-item">⚙️ Settings</div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+      <!-- My Notes -->
+      <section class="main-section">
+        <div class="section-header">
+          <h2 class="section-title">Catatan Yosapat</h2>
+          <div class="chip-group" id="noteFilterChips">
+            <button class="chip active" data-filter="today">Today</button>
+            <button class="chip" data-filter="week">This Week</button>
+            <button class="chip" data-filter="month">This Month</button>
+          </div>
+        </div>
+        <div class="notes-row" id="notesRow">
+          <!-- diisi JS -->
+        </div>
+      </section>
+
+      <!-- Recent Folders -->
+      <section class="main-section">
+        <div class="section-header">
+          <h2 class="section-title">Recent Folders</h2>
+          <div class="tabs" id="folderTabs">
+            <span class="tab active" data-filter="all">All</span>
+            <span class="tab" data-filter="recent">Recent</span>
+            <span class="tab" data-filter="modified">Last modified</span>
+          </div>
+        </div>
+        <div class="folders-row" id="recentFoldersRow">
+          <!-- diisi JS -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL NOTE -->
+  <div class="modal-backdrop" id="noteModalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="noteModalTitle">New Note</span>
+        <button class="modal-close" id="closeNoteModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="noteTitleInput">Title</label>
+        <input id="noteTitleInput" type="text" placeholder="Reminders" />
+
+        <label for="noteLinesInput">Lines (one per row)</label>
+        <textarea id="noteLinesInput" placeholder="Dentist appointment on Tuesday&#10;Submit report by end of the day"></textarea>
+
+        <label for="noteFolderSelect">Folder</label>
+        <select id="noteFolderSelect"></select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="deleteNoteBtn" style="display:none;">Delete</button>
+        <div style="flex:1;display:flex;justify-content:flex-end;gap:6px;">
+          <button class="btn btn-outline" id="cancelNoteBtn">Cancel</button>
+          <button class="btn btn-primary-solid" id="saveNoteBtn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FOLDER -->
+  <div class="modal-backdrop" id="folderModalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">New Folder</span>
+        <button class="modal-close" id="closeFolderModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="folderNameInput">Folder name</label>
+        <input id="folderNameInput" type="text" placeholder="Bucket List" />
+      </div>
+      <div class="modal-footer" style="justify-content:flex-end;">
+        <button class="btn btn-outline" id="cancelFolderBtn">Cancel</button>
+        <button class="btn btn-primary-solid" id="saveFolderBtn">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- DATA & STORAGE ----------
+
+    const STORAGE_KEY = "syncscribe_state_v1";
+
+    let state = {
+      folders: [],
+      notes: [],
+      activeFolderId: null,
+      period: "today",
+    };
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try {
+          state = JSON.parse(raw);
+          return;
+        } catch (e) {
+          console.error("Failed to parse saved state", e);
+        }
+      }
+      // default data
+      const now = new Date();
+      const bucketId = Date.now();
+      const financesId = bucketId + 1;
+      const travelId = bucketId + 2;
+      const shoppingId = bucketId + 3;
+      const personalId = bucketId + 4;
+      const workId = bucketId + 5;
+      const projectsId = bucketId + 6;
+
+      state.folders = [
+      { id: bucketId, name: "Catatan 1", code: "C1", createdAt: now, updatedAt: now },
+      { id: financesId, name: "Catatan 2", code: "C2", createdAt: now, updatedAt: now },
+      { id: travelId, name: "Catatan 3", code: "C3", createdAt: now, updatedAt: now },
+      { id: shoppingId, name: "Catatan 4", code: "C4", createdAt: now, updatedAt: now },
+      { id: personalId, name: "Catatan 5", code: "C5", createdAt: now, updatedAt: now },
+      { id: workId, name: "Catatan 6", code: "C6", createdAt: now, updatedAt: now },
+      { id: projectsId, name: "Catatan 7", code: "C7", createdAt: now, updatedAt: now },
+    ];
+      state.activeFolderId = bucketId;
+      state.notes = [
+        {
+          id: bucketId + 100,
+          title: "Reminders",
+          lines: [
+            "Dentist appointment on Tuesday",
+            "Submit report by end of the day",
+            "Send email to boss",
+            "Call mom",
+          ],
+          folderId: bucketId,
+          createdAt: now,
+          updatedAt: now,
+        },
+        {
+          id: bucketId + 101,
+          title: "Random Thoughts",
+          lines: [
+            "\"Success is a journey, not a des...\"",
+            "Try a new recipe this weekend!",
+            "Don't forget to water the plants",
+            "Idea: build my own note app",
+          ],
+          folderId: bucketId,
+          createdAt: now,
+          updatedAt: now,
+        },
+      ];
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    // ---------- RENDERING ----------
+
+    const sidebarFolderList = document.getElementById("sidebarFolderList");
+    const recentFoldersRow = document.getElementById("recentFoldersRow");
+    const notesRow = document.getElementById("notesRow");
+
+    function renderFoldersSidebar() {
+      sidebarFolderList.innerHTML = "";
+      state.folders.forEach((folder) => {
+        const li = document.createElement("li");
+        li.className =
+          "folder-item" + (folder.id === state.activeFolderId ? " active" : "");
+        li.textContent = folder.name;
+        li.dataset.id = folder.id;
+        li.addEventListener("click", () => {
+          state.activeFolderId = folder.id;
+          folder.updatedAt = new Date();
+          saveState();
+          renderFoldersSidebar();
+          renderNotes();
+          renderRecentFolders(); // urut recent
+        });
+        sidebarFolderList.appendChild(li);
+      });
+    }
+
+    function renderRecentFolders(filter = "all") {
+      recentFoldersRow.innerHTML = "";
+      let folders = [...state.folders];
+      folders.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      if (filter === "recent") {
+        folders = folders.slice(0, 4);
+      } else if (filter === "modified") {
+        folders = folders.slice(0, 4);
+      }
+      folders.forEach((folder) => {
+        const card = document.createElement("div");
+        card.className = "folder-card";
+        card.innerHTML = `
+          <div class="folder-icon">
+            <span>${folder.code || folder.name.slice(0, 2)}</span>
+          </div>
+          <div class="folder-name">${folder.name}</div>
+        `;
+        card.addEventListener("click", () => {
+          state.activeFolderId = folder.id;
+          folder.updatedAt = new Date();
+          saveState();
+          renderFoldersSidebar();
+          renderNotes();
+          renderRecentFolders(filter);
+        });
+        recentFoldersRow.appendChild(card);
+      });
+    }
+
+    function filterNotesByPeriod(notes, period) {
+      const now = new Date();
+      return notes.filter((note) => {
+        const d = new Date(note.createdAt);
+        if (period === "today") {
+          return d.toDateString() === now.toDateString();
+        } else if (period === "week") {
+          const diffDays = (now - d) / (1000 * 60 * 60 * 24);
+          return diffDays <= 7;
+        } else if (period === "month") {
+          return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        }
+        return true;
+      });
+    }
+
+    function renderNotes() {
+      notesRow.innerHTML = "";
+      let notes = state.notes.filter(
+        (n) => n.folderId === state.activeFolderId
+      );
+      notes = filterNotesByPeriod(notes, state.period);
+      if (notes.length === 0) {
+        const empty = document.createElement("div");
+        empty.style.padding = "10px";
+        empty.style.color = "#9ca3af";
+        empty.textContent = "No notes in this folder for this period.";
+        notesRow.appendChild(empty);
+        return;
+      }
+
+      notes.forEach((note, idx) => {
+        const card = document.createElement("article");
+        const colorClass = "color-" + (((idx % 4) + 1));
+        card.className = "note-card " + colorClass;
+        const time = new Date(note.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        card.innerHTML = `
+          <div class="note-header">
+            <div class="note-title">${note.title}</div>
+            <div class="note-time">${time}</div>
+          </div>
+          <ul class="note-list">
+            ${note.lines
+              .map((line) => `<li title="${line.replace(/"/g, "&quot;")}">${line}</li>`)
+              .join("")}
+          </ul>
+          <div class="note-edit" data-id="${note.id}" title="Edit note">✎</div>
+        `;
+        card.querySelector(".note-edit").addEventListener("click", () =>
+          openNoteModal(note.id)
+        );
+        notesRow.appendChild(card);
+      });
+    }
+
+    // ---------- MODAL NOTE ----------
+
+    const noteModalBackdrop = document.getElementById("noteModalBackdrop");
+    const noteModalTitle = document.getElementById("noteModalTitle");
+    const noteTitleInput = document.getElementById("noteTitleInput");
+    const noteLinesInput = document.getElementById("noteLinesInput");
+    const noteFolderSelect = document.getElementById("noteFolderSelect");
+    const deleteNoteBtn = document.getElementById("deleteNoteBtn");
+
+    let editingNoteId = null;
+
+    function populateFolderSelect() {
+      noteFolderSelect.innerHTML = "";
+      state.folders.forEach((folder) => {
+        const opt = document.createElement("option");
+        opt.value = folder.id;
+        opt.textContent = folder.name;
+        noteFolderSelect.appendChild(opt);
+      });
+    }
+
+    function openNoteModal(noteId = null) {
+      populateFolderSelect();
+      if (noteId) {
+        const note = state.notes.find((n) => n.id === noteId);
+        editingNoteId = noteId;
+        noteModalTitle.textContent = "Edit Note";
+        noteTitleInput.value = note.title;
+        noteLinesInput.value = note.lines.join("\n");
+        noteFolderSelect.value = note.folderId;
+        deleteNoteBtn.style.display = "inline-flex";
+      } else {
+        editingNoteId = null;
+        noteModalTitle.textContent = "New Note";
+        noteTitleInput.value = "";
+        noteLinesInput.value = "";
+        noteFolderSelect.value = state.activeFolderId;
+        deleteNoteBtn.style.display = "none";
+      }
+      noteModalBackdrop.classList.add("show");
+      noteTitleInput.focus();
+    }
+
+    function closeNoteModal() {
+      noteModalBackdrop.classList.remove("show");
+    }
+
+    document.getElementById("createNoteBtn").addEventListener("click", () =>
+      openNoteModal()
+    );
+    document.getElementById("closeNoteModalBtn").addEventListener("click", closeNoteModal);
+    document.getElementById("cancelNoteBtn").addEventListener("click", closeNoteModal);
+    noteModalBackdrop.addEventListener("click", (e) => {
+      if (e.target === noteModalBackdrop) closeNoteModal();
+    });
+
+    document.getElementById("saveNoteBtn").addEventListener("click", () => {
+      const title = noteTitleInput.value.trim();
+      const lines = noteLinesInput.value
+        .split("\n")
+        .map((l) => l.trim())
+        .filter((l) => l);
+      const folderId = Number(noteFolderSelect.value);
+      if (!title) {
+        alert("Title is required");
+        return;
+      }
+      const now = new Date();
+      if (editingNoteId) {
+        const note = state.notes.find((n) => n.id === editingNoteId);
+        note.title = title;
+        note.lines = lines;
+        note.folderId = folderId;
+        note.updatedAt = now;
+      } else {
+        state.notes.push({
+          id: Date.now(),
+          title,
+          lines,
+          folderId,
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+      const folder = state.folders.find((f) => f.id === folderId);
+      folder.updatedAt = now;
+      saveState();
+      closeNoteModal();
+      renderNotes();
+      renderRecentFolders(
+        document.querySelector("#folderTabs .tab.active").dataset.filter
+      );
+      renderFoldersSidebar();
+    });
+
+    deleteNoteBtn.addEventListener("click", () => {
+      if (!editingNoteId) return;
+      if (!confirm("Delete this note?")) return;
+      state.notes = state.notes.filter((n) => n.id !== editingNoteId);
+      saveState();
+      closeNoteModal();
+      renderNotes();
+    });
+
+    // ---------- MODAL FOLDER ----------
+
+    const folderModalBackdrop = document.getElementById("folderModalBackdrop");
+    const folderNameInput = document.getElementById("folderNameInput");
+
+    function openFolderModal() {
+      folderNameInput.value = "";
+      folderModalBackdrop.classList.add("show");
+      folderNameInput.focus();
+    }
+
+    function closeFolderModal() {
+      folderModalBackdrop.classList.remove("show");
+    }
+
+    document.getElementById("addFolderBtn").addEventListener("click", openFolderModal);
+    document.getElementById("closeFolderModalBtn").addEventListener("click", closeFolderModal);
+    document.getElementById("cancelFolderBtn").addEventListener("click", closeFolderModal);
+    folderModalBackdrop.addEventListener("click", (e) => {
+      if (e.target === folderModalBackdrop) closeFolderModal();
+    });
+
+    document.getElementById("saveFolderBtn").addEventListener("click", () => {
+      const name = folderNameInput.value.trim();
+      if (!name) {
+        alert("Folder name is required");
+        return;
+      }
+      const now = new Date();
+      const id = Date.now();
+      const code = name
+        .split(" ")
+        .map((w) => w[0])
+        .join("")
+        .slice(0, 2);
+      state.folders.push({
+        id,
+        name,
+        code,
+        createdAt: now,
+        updatedAt: now,
+      });
+      state.activeFolderId = id;
+      saveState();
+      closeFolderModal();
+      renderFoldersSidebar();
+      renderRecentFolders(
+        document.querySelector("#folderTabs .tab.active").dataset.filter
+      );
+      renderNotes();
+    });
+
+    // ---------- FILTER CHIPS ----------
+
+    document.getElementById("noteFilterChips").addEventListener("click", (e) => {
+      if (e.target.classList.contains("chip")) {
+        document
+          .querySelectorAll("#noteFilterChips .chip")
+          .forEach((c) => c.classList.remove("active"));
+        e.target.classList.add("active");
+        state.period = e.target.dataset.filter;
+        renderNotes();
+      }
+    });
+
+    document.getElementById("folderTabs").addEventListener("click", (e) => {
+      if (e.target.classList.contains("tab")) {
+        document
+          .querySelectorAll("#folderTabs .tab")
+          .forEach((t) => t.classList.remove("active"));
+        e.target.classList.add("active");
+        const filter = e.target.dataset.filter;
+        renderRecentFolders(filter);
+      }
+    });
+
+    // ---------- MENU SEARCH & ARCHIVES (sekadar bisa diklik) ----------
+
+    document.getElementById("menuSearch").addEventListener("click", () => {
+      const q = prompt("Search notes (title & lines contain):");
+      if (!q) return;
+      const query = q.toLowerCase();
+      const results = state.notes.filter(
+        (n) =>
+          n.title.toLowerCase().includes(query) ||
+          n.lines.some((l) => l.toLowerCase().includes(query))
+      );
+      if (results.length === 0) {
+        alert("No notes match your search.");
+        return;
+      }
+      // tampilkan folder dari hasil pertama & highlight periode 'All'
+      state.activeFolderId = results[0].folderId;
+      state.period = "today";
+      document
+        .querySelectorAll("#noteFilterChips .chip")
+        .forEach((c) => c.classList.remove("active"));
+      document
+        .querySelector('#noteFilterChips .chip[data-filter="today"]')
+        .classList.add("active");
+      renderFoldersSidebar();
+      // sementara tampilkan semua hasil di folder tersebut
+      notesRow.innerHTML = "";
+      results.forEach((note, idx) => {
+        const card = document.createElement("article");
+        const colorClass = "color-" + (((idx % 4) + 1));
+        card.className = "note-card " + colorClass;
+        const time = new Date(note.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        card.innerHTML = `
+          <div class="note-header">
+            <div class="note-title">${note.title}</div>
+            <div class="note-time">${time}</div>
+          </div>
+          <ul class="note-list">
+            ${note.lines
+              .map((line) => `<li title="${line.replace(/"/g, "&quot;")}">${line}</li>`)
+              .join("")}
+          </ul>
+          <div class="note-edit" data-id="${note.id}" title="Edit note">✎</div>
+        `;
+        card.querySelector(".note-edit").addEventListener("click", () =>
+          openNoteModal(note.id)
+        );
+        notesRow.appendChild(card);
+      });
+    });
+
+    document.getElementById("menuArchives").addEventListener("click", () => {
+      alert("Archive feature is not implemented yet, but the menu works 🙂");
+    });
+
+    // ---------- KEYBOARD SHORTCUTS ----------
+
+    document.addEventListener("keydown", (e) => {
+      const isMac = navigator.platform.toUpperCase().includes("MAC");
+      const meta = isMac ? e.metaKey : e.ctrlKey;
+
+      if (meta && e.key.toLowerCase() === "n") {
+        e.preventDefault();
+        openNoteModal();
+      }
+      if (meta && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        document.getElementById("menuSearch").click();
+      }
+    });
+
+    // ---------- INIT ----------
+
+    loadState();
+    renderFoldersSidebar();
+    renderRecentFolders("all");
+    renderNotes();
+  </script>
+</body>
+</html>
